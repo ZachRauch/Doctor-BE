@@ -16,7 +16,7 @@ public class UsersController {
     private ArrayList<User> users = new ArrayList<>();
 
 //    FE: this.http.get<User[]>('http://localhost:3000/users')
-//    HttpClient made an http request
+//    HttpClient made a http request
 //    BE: Tomcat received the request
 //    Tomcat called the function below b/c it was mapped to /users, GET
 
