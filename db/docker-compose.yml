@@ -1,0 +1,28 @@
+# Docker - a containization platform
+#         allows developers to easily create and share containers
+# container - little sibling to a virtual machine
+# virtual-machine - emulate an OS within a running OS
+# why run a virtual machine?
+# 1. Security
+# 2. Isolation
+# 3. Backups
+# 4. Replication
+
+# docker-compose - allows us to easily manage multiple docker containers
+
+version: '3'
+
+services:
+  db:
+    image: 'postgres:latest' # the container that I want to copy
+    # image - a shareable file that container can be created from
+    ports:
+      - "5432:5432"
+    environment: # set env vars in the container
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+# in IntelliJ's terminal, cd into the folder that has the yml file (db in this case) and run: docker compose up -d

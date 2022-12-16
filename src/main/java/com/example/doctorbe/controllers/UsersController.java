@@ -1,19 +1,21 @@
 package com.example.doctorbe.controllers;
 
-import com.example.doctorbe.models.User;
+import com.example.doctorbe.models.AppUser;
+import com.example.doctorbe.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/users")
 @CrossOrigin
 public class UsersController {
-    private Long nextUserId = 0L;
-    private ArrayList<User> users = new ArrayList<>();
+    private UserService service;
+//    Dependency injection
+
+    public UsersController(UserService service) {
+        this.service = service;
+    }
 
 //    FE: this.http.get<User[]>('http://localhost:3000/users')
 //    HttpClient made a http request
@@ -21,38 +23,23 @@ public class UsersController {
 //    Tomcat called the function below b/c it was mapped to /users, GET
 
     @GetMapping
-    public Iterable<User> getByUsernameAndPassword(
-            @RequestParam(required = false) String username,
-            @RequestParam(required = false) String password) {
-        if (username == null && password == null)
-            return users;
+    public AppUser getByUsernameAndPassword(
+            @RequestParam String username,
+            @RequestParam String password) {
+        final var user = service.getByUsernameAndPassword(username, password);
 
-        if (password == null)
-            for (User user : users) {
-                if (user.username.equals(username)) {
-                    return List.of(new User[]{user});
-                }
-            }
-        else
-            for (User user : users) {
-                if (user.username.equals(username) && user.password.equals(password)) {
-                    return List.of(new User[]{user});
-                }
-            }
-        return List.of(new User[]{});
+        if (user == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        return user;
     }
 
     //    FE post request
     @PostMapping
-    public ResponseEntity<Void> register(@RequestBody User user) {
-        for (User existingUser : users) {
-            if (user.username.equals(existingUser.username)) {
-                return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
-            }
+    public void register(@RequestBody AppUser user) {
+        try {
+            service.register(user);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED);
         }
-        user.id = nextUserId++;
-        users.add(user);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

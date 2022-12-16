@@ -1,8 +1,16 @@
 package com.example.doctorbe.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.util.Date;
 
+@Entity
 public class Appointment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     public Long doctorId;
     public Long patientId;
@@ -15,5 +23,8 @@ public class Appointment {
         this.patientId = patientId;
         this.date = date;
         this.slot = slot;
+    }
+
+    public Appointment() {
     }
 }
